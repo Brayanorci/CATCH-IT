@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CATCH IT! Un divertido videojuego arcade de atrapar objetos.">
+    <title>CATCH IT! - Atrapa todo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="game-container">
+        <header class="top-bar">
+            <div class="brand">
+                <span class="brand-icon">🎮</span>
+                <div>
+                    <h1>CATCH IT!</h1>
+                    <p>ATRAPA TODO</p>
+                </div>
+            </div>
+            <div class="best-score">
+                <span>RÉCORD</span>
+                <strong id="bestScore">0</strong>
+            </div>
+        </header>
+
+        <section class="game-panel">
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-label">PUNTOS</span>
+                    <strong id="score">0</strong>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Vidas</span>
+                    <strong id="lives">❤️❤️❤️</strong>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">NIVEL</span>
+                    <strong id="level">1</strong>
+                </div>
+            </div>
+
+            <div class="canvas-wrapper">
+                <canvas id="gameCanvas" width="900" height="540"
+                    aria-label="Área de juego de CATCH IT!">
+                </canvas>
+
+                <div class="overlay" id="overlay">
+                    <div class="overlay-content">
+                        <div class="hero-icon" id="overlayIcon">🧺</div>
+                        <h2 id="overlayTitle">¡CATCH IT!</h2>
+                        <p id="overlayText">
+                            Atrapa las frutas y estrellas. ¡Evita las bombas!
+                        </p>
+                        <button id="startButton">¡JUGAR AHORA!</button>
+                        <p class="hint">Usa ← → o A / D para moverte</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-footer">
+                <span>🍎 +10 PUNTOS</span>
+                <span>⭐ +25 PUNTOS</span>
+                <span>💣 -1 VIDA</span>
+            </div>
+        </section>
+
+        <footer class="page-footer">
+            <p>Hecho con ❤️ y JavaScript</p>
+        </footer>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
