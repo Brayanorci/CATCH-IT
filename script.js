@@ -14,8 +14,8 @@ const overlayText = document.getElementById("overlayText");
 const startButton = document.getElementById("startButton");
 const missedFruitsElement = document.getElementById("missedFruits");
 
-const WIDTH = canvas.width;
-const HEIGHT = canvas.height;
+let WIDTH = canvas.width;
+let HEIGHT = canvas.height;
 
 let score = 0;
 let lives = 3;
@@ -40,6 +40,50 @@ const basket = {
     height: 55,
     speed: 430
 };
+
+
+// Adaptar las dimensiones del juego según el dispositivo
+function resizeCanvasForDevice() {
+    const oldWidth = WIDTH;
+    const oldHeight = HEIGHT;
+
+    const isMobile = window.matchMedia("(max-width: 700px)").matches;
+
+    // Horizontal en PC y vertical en celulares
+    const newWidth = isMobile ? 540 : 900;
+    const newHeight = isMobile ? 720 : 540;
+
+    // Evitar reiniciar el Canvas si no cambió de tamaño
+    if (WIDTH === newWidth && HEIGHT === newHeight) {
+        return;
+    }
+
+    WIDTH = newWidth;
+    HEIGHT = newHeight;
+
+    canvas.width = WIDTH;
+    canvas.height = HEIGHT;
+
+    // Conservar la posición horizontal de los elementos
+    basket.x = (basket.x / oldWidth) * WIDTH;
+    basket.y = HEIGHT - 65;
+
+    items.forEach(item => {
+        item.x = (item.x / oldWidth) * WIDTH;
+        item.y = (item.y / oldHeight) * HEIGHT;
+    });
+
+    particles.forEach(particle => {
+        particle.x = (particle.x / oldWidth) * WIDTH;
+        particle.y = (particle.y / oldHeight) * HEIGHT;
+    });
+
+    // Evitar que la canasta salga de los límites
+    basket.x = Math.max(
+        basket.width / 2,
+        Math.min(WIDTH - basket.width / 2, basket.x)
+    );
+}
 
 const objectTypes = [
     { emoji: "🍎", points: 10, type: "fruit" },
@@ -626,6 +670,21 @@ canvas.addEventListener("pointermove", event => {
         moveBasketToPointer(event);
     }
 });
+
+
+// Configurar el tamaño inicial y detectar cambios de orientación
+resizeCanvasForDevice();
+
+window.addEventListener("resize", () => {
+    resizeCanvasForDevice();
+
+    if (!gameRunning) {
+        drawBackground();
+        drawBasket();
+    }
+});
+
+
 // BOTÓN DE INICIO Y REINICIO
 startButton.addEventListener("click", startGame);
 

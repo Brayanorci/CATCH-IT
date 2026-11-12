@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800;900&display=swap');
 
 :root {
@@ -348,10 +347,13 @@ button:focus-visible {
     letter-spacing: 1px;
     text-shadow: 0 0 10px #42e8ed55;
 }
+
 /* ANIMACIONES */
 
 @keyframes float {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0);
     }
 
@@ -381,7 +383,9 @@ button:focus-visible {
 }
 
 @keyframes screenShake {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translate(0, 0);
     }
 
@@ -496,6 +500,8 @@ button:focus-visible {
     }
 
     .canvas-wrapper {
+        width: 100%;
+        aspect-ratio: 3 / 4;
         border-radius: 12px;
     }
 
@@ -503,21 +509,9 @@ button:focus-visible {
         touch-action: none;
     }
 
+    /* Ocultar controles táctiles: se utilizará el área de juego */
     .mobile-controls {
-        display: flex;
-        gap: clamp(15px, 6vw, 35px);
-        padding: 15px 0 8px;
-    }
-
-    .control-btn {
-        width: clamp(65px, 19vw, 80px);
-        height: 58px;
-        font-size: 24px;
-    }
-
-    .mobile-controls span {
-        font-size: 9px;
-        letter-spacing: 1.5px;
+        display: none;
     }
 
     .game-footer {
@@ -611,6 +605,7 @@ button:focus-visible {
 /* PANTALLAS CON MOVIMIENTO REDUCIDO */
 
 @media (prefers-reduced-motion: reduce) {
+
     *,
     *::before,
     *::after {
