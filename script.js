@@ -565,8 +565,49 @@ function moveBasketToPointer(event) {
     );
 }
 
-canvas.addEventListener("pointermove", moveBasketToPointer);
 
+
+// CONTROLES TÁCTILES PARA CELULARES
+
+function setupTouchControl(buttonId, direction) {
+    const button = document.getElementById(buttonId);
+
+    button.addEventListener("pointerdown", event => {
+        event.preventDefault();
+        button.setPointerCapture(event.pointerId);
+        keys[direction] = true;
+    });
+
+    function releaseControl(event) {
+        keys[direction] = false;
+    }
+
+    button.addEventListener("pointerup", releaseControl);
+    button.addEventListener("pointercancel", releaseControl);
+    button.addEventListener("lostpointercapture", releaseControl);
+}
+
+setupTouchControl("leftControl", "ArrowLeft");
+setupTouchControl("rightControl", "ArrowRight");
+
+
+canvas.addEventListener("pointerdown", event => {
+    if (event.pointerType === "touch") {
+        canvas.setPointerCapture(event.pointerId);
+    }
+
+    moveBasketToPointer(event);
+});
+
+canvas.addEventListener("pointermove", event => {
+    if (
+        event.pointerType === "mouse" ||
+        event.buttons > 0 ||
+        event.pointerType === "touch"
+    ) {
+        moveBasketToPointer(event);
+    }
+});
 // BOTÓN DE INICIO Y REINICIO
 startButton.addEventListener("click", startGame);
 

@@ -436,3 +436,81 @@ button:focus-visible {
         opacity: 0;
     }
 }
+
+
+/* CONTROLES TÁCTILES */
+.mobile-controls {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    gap: 35px;
+    padding: 16px 0 5px;
+    touch-action: none;
+}
+
+.mobile-controls span {
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.control-btn {
+    width: 72px;
+    height: 58px;
+    padding: 0;
+    border-radius: 15px;
+    font-size: 25px;
+    color: white;
+    background: linear-gradient(145deg, #37446d, #202944);
+    border: 1px solid var(--cyan);
+    box-shadow: 0 5px 0 #11182d;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.control-btn:active {
+    transform: translateY(3px);
+    background: var(--purple);
+    box-shadow: 0 2px 0 #11182d;
+}
+
+@media (max-width: 700px) {
+    .mobile-controls {
+        display: flex;
+    }
+
+    .canvas-wrapper,
+    canvas {
+        touch-action: none;
+    }
+
+    .game-container {
+        width: 100%;
+    }
+
+    body {
+        padding: 12px 8px;
+    }
+
+    .game-panel {
+        padding: 9px;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .stat {
+        min-width: 0;
+    }
+
+    .stat-label {
+        font-size: 9px;
+    }
+
+    .game-footer span {
+        font-size: 9px;
+    }
+}
