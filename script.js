@@ -12,6 +12,7 @@ const overlayIcon = document.getElementById("overlayIcon");
 const overlayTitle = document.getElementById("overlayTitle");
 const overlayText = document.getElementById("overlayText");
 const startButton = document.getElementById("startButton");
+const missedFruitsElement = document.getElementById("missedFruits");
 
 const WIDTH = canvas.width;
 const HEIGHT = canvas.height;
@@ -19,6 +20,7 @@ const HEIGHT = canvas.height;
 let score = 0;
 let lives = 3;
 let level = 1;
+let missedFruits = 0;
 let bestScore = Number(localStorage.getItem("catchItBest")) || 0;
 
 let gameRunning = false;
@@ -85,6 +87,83 @@ function playSound(frequency, duration, type = "sine") {
     }
 }
 
+
+// EFECTO DE SONIDO AL PERDER UNA VIDA
+function playDamageSound() {
+    try {
+        if (!audioContext) {
+            audioContext = new (
+                window.AudioContext || window.webkitAudioContext
+            )();
+        }
+
+        if (audioContext.state === "suspended") {
+            audioContext.resume();
+        }
+
+        const now = audioContext.currentTime;
+
+        // Sonido grave de impacto
+        const oscillator = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        oscillator.type = "sawtooth";
+        oscillator.frequency.setValueAtTime(150, now);
+        oscillator.frequency.exponentialRampToValueAtTime(45, now + 0.35);
+
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+        oscillator.connect(gain);
+        gain.connect(audioContext.destination);
+
+        oscillator.start(now);
+        oscillator.stop(now + 0.4);
+
+        // Segundo sonido para reforzar el impacto
+        const secondOscillator = audioContext.createOscillator();
+        const secondGain = audioContext.createGain();
+
+        secondOscillator.type = "triangle";
+        secondOscillator.frequency.setValueAtTime(85, now);
+        secondOscillator.frequency.exponentialRampToValueAtTime(30, now + 0.25);
+
+        secondGain.gain.setValueAtTime(0.22, now);
+        secondGain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+        secondOscillator.connect(secondGain);
+        secondGain.connect(audioContext.destination);
+
+        secondOscillator.start(now);
+        secondOscillator.stop(now + 0.3);
+
+    } catch (error) {
+        console.warn("Error al reproducir sonido de daño:", error);
+    }
+}
+
+
+// ACTIVAR EFECTOS VISUALES Y SONOROS DE DAÑO
+function triggerDamageEffect() {
+    const gameArea = document.querySelector(".canvas-wrapper");
+
+    // Reiniciar la animación para permitir impactos consecutivos
+    gameArea.classList.remove("damage");
+    void gameArea.offsetWidth;
+    gameArea.classList.add("damage");
+
+    playDamageSound();
+}
+
+// Retirar la clase cuando termina la animación
+document.querySelector(".canvas-wrapper").addEventListener(
+    "animationend",
+    () => {
+        document.querySelector(".canvas-wrapper").classList.remove("damage");
+    }
+);
+
+
 // FONDO DEL JUEGO
 const stars = Array.from({ length: 65 }, () => ({
     x: Math.random() * WIDTH,
@@ -120,11 +199,60 @@ function drawBackground() {
 }
 
 // CANASTA
+
 function drawBasket() {
-    ctx.font = "70px serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("🧺", basket.x, basket.y);
+    ctx.save();
+
+    const x = basket.x;
+    const y = basket.y;
+
+    // Sombra
+    ctx.fillStyle = "#00000055";
+    ctx.beginPath();
+    ctx.ellipse(x, y + 24, 48, 9, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Cuerpo de la canasta
+    const gradient = ctx.createLinearGradient(
+        x, y - 5, x, y + 35
+    );
+
+    gradient.addColorStop(0, "#ffca72");
+    gradient.addColorStop(1, "#b9682f");
+
+    ctx.fillStyle = gradient;
+    ctx.strokeStyle = "#713b28";
+    ctx.lineWidth = 5;
+
+    ctx.beginPath();
+    ctx.moveTo(x - 43, y - 8);
+    ctx.lineTo(x - 34, y + 31);
+    ctx.quadraticCurveTo(x, y + 43, x + 34, y + 31);
+    ctx.lineTo(x + 43, y - 8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Franjas de la canasta
+    ctx.strokeStyle = "#ffe0a0";
+    ctx.lineWidth = 4;
+
+    for (let i = -2; i <= 2; i++) {
+        ctx.beginPath();
+        ctx.moveTo(x + i * 14, y - 5);
+        ctx.lineTo(x + i * 12, y + 32);
+        ctx.stroke();
+    }
+
+    // Borde superior
+    ctx.strokeStyle = "#ffdf9c";
+    ctx.lineWidth = 7;
+    ctx.beginPath();
+    ctx.moveTo(x - 47, y - 8);
+    ctx.quadraticCurveTo(x, y - 17, x + 47, y - 8);
+    ctx.stroke();
+
+    ctx.restore();
 }
 
 // CREAR OBJETOS
@@ -194,8 +322,11 @@ function drawParticles() {
 // ACTUALIZAR INFORMACIÓN
 function updateStats() {
     scoreElement.textContent = score;
-    livesElement.textContent = "❤️".repeat(lives) + "🖤".repeat(3 - lives);
+    livesElement.textContent =
+        "❤️".repeat(lives) + "🖤".repeat(3 - lives);
+
     levelElement.textContent = level;
+    missedFruitsElement.textContent = `${missedFruits}/5`;
 }
 
 // DETECTAR COLISIONES
@@ -226,7 +357,7 @@ function updateItems(deltaTime) {
         if (checkCollision(item)) {
             if (item.type === "bomb") {
                 lives--;
-                playSound(130, 0.25, "sawtooth");
+                triggerDamageEffect();
                 createParticles(item.x, item.y, "#ff4d6d");
 
                 if (lives <= 0) {
@@ -252,7 +383,33 @@ function updateItems(deltaTime) {
         }
 
         // Eliminar objetos que salen de la pantalla
+        // Detectar objetos que salen de la pantalla
         if (item.y > HEIGHT + 40) {
+
+            // Solamente las frutas cuentan como objetos perdidos
+            if (item.type === "fruit") {
+                missedFruits++;
+
+                // Cada 5 frutas perdidas se pierde una vida
+                if (missedFruits >= 5) {
+                    missedFruits = 0;
+                    lives--;
+
+                    triggerDamageEffect();
+                    createParticles(item.x, HEIGHT - 20, "#ff4d6d");
+
+                    if (lives <= 0) {
+                        lives = 0;
+                        items.splice(i, 1);
+                        updateStats();
+                        endGame();
+                        return;
+                    }
+                }
+
+                updateStats();
+            }
+
             items.splice(i, 1);
         }
     }
@@ -340,6 +497,7 @@ function startGame() {
     level = 1;
     spawnTimer = 0;
     lastTime = 0;
+    missedFruits = 0;
 
     items = [];
     particles = [];

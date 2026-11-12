@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +8,7 @@
     <title>CATCH IT! - Atrapa todo</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <main class="game-container">
         <header class="top-bar">
@@ -38,11 +39,16 @@
                     <span class="stat-label">NIVEL</span>
                     <strong id="level">1</strong>
                 </div>
+                <div class="stat">
+                    <span class="stat-label">FRUTAS PERDIDAS</span>
+                    <strong id="missedFruits">0/5</strong>
+                </div>
+
+
             </div>
 
             <div class="canvas-wrapper">
-                <canvas id="gameCanvas" width="900" height="540"
-                    aria-label="Área de juego de CATCH IT!">
+                <canvas id="gameCanvas" width="900" height="540" aria-label="Área de juego de CATCH IT!">
                 </canvas>
 
                 <div class="overlay" id="overlay">
@@ -72,4 +78,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
