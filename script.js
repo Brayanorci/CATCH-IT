@@ -569,16 +569,26 @@ function moveBasketToPointer(event) {
 
 // CONTROLES TÁCTILES PARA CELULARES
 
+
+// CONTROLES TÁCTILES PARA CELULARES
+
+
 function setupTouchControl(buttonId, direction) {
     const button = document.getElementById(buttonId);
 
+    if (!button) {
+        console.warn(`No se encontró el botón: ${buttonId}`);
+        return;
+    }
+
     button.addEventListener("pointerdown", event => {
         event.preventDefault();
+
         button.setPointerCapture(event.pointerId);
         keys[direction] = true;
     });
 
-    function releaseControl(event) {
+    function releaseControl() {
         keys[direction] = false;
     }
 
@@ -586,6 +596,14 @@ function setupTouchControl(buttonId, direction) {
     button.addEventListener("pointercancel", releaseControl);
     button.addEventListener("lostpointercapture", releaseControl);
 }
+
+setupTouchControl("leftControl", "ArrowLeft");
+setupTouchControl("rightControl", "ArrowRight");
+
+
+setupTouchControl("leftControl", "ArrowLeft");
+setupTouchControl("rightControl", "ArrowRight");
+
 
 setupTouchControl("leftControl", "ArrowLeft");
 setupTouchControl("rightControl", "ArrowRight");
