@@ -343,11 +343,11 @@ button:focus-visible {
 .page-footer {
     margin-top: 22px;
     text-align: center;
-    color: #7f8baa;
+    color: #42e8ed;
     font-size: 12px;
-    letter-spacing: .5px;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px #42e8ed55;
 }
-
 /* ANIMACIONES */
 
 @keyframes float {
